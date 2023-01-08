@@ -9,9 +9,11 @@ import Foundation
 
 final class DependenciesContainer {
     let apiService: APIServiceProtocol
+    var basicAuthorization: BasicAuthentication
 
-    init(apiService: APIServiceProtocol) {
+    init(apiService: APIServiceProtocol, basicAuthorization: BasicAuthentication) {
         self.apiService = apiService
+        self.basicAuthorization = basicAuthorization
     }
 }
 
@@ -20,6 +22,9 @@ extension DependenciesContainer {
         return .init(
             apiService: APIService(
                 baseURL: URL(string: "http://163.172.147.216:8080")!
+            ),
+            basicAuthorization: BasicAuthentication(
+                credentials: (username: "noel", password: "foobar")
             )
         )
     }

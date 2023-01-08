@@ -20,6 +20,8 @@
 		6ED3B44F296B40E400018D07 /* Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3B44E296B40E400018D07 /* Endpoints.swift */; };
 		6ED3B451296B40F000018D07 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3B450296B40F000018D07 /* Model.swift */; };
 		6ED3B453296B43F800018D07 /* DependenciesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3B452296B43F800018D07 /* DependenciesContainer.swift */; };
+		6ED3B455296B527100018D07 /* Interceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3B454296B527100018D07 /* Interceptor.swift */; };
+		6ED3B457296B538100018D07 /* BasicAuthentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3B456296B538100018D07 /* BasicAuthentication.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,8 @@
 		6ED3B44E296B40E400018D07 /* Endpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoints.swift; sourceTree = "<group>"; };
 		6ED3B450296B40F000018D07 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		6ED3B452296B43F800018D07 /* DependenciesContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependenciesContainer.swift; sourceTree = "<group>"; };
+		6ED3B454296B527100018D07 /* Interceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interceptor.swift; sourceTree = "<group>"; };
+		6ED3B456296B538100018D07 /* BasicAuthentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAuthentication.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +122,8 @@
 				6ED3B447296ADDE900018D07 /* APIEndpoint.swift */,
 				6ED3B449296ADE5300018D07 /* APIError.swift */,
 				6ED3B44B296ADEA400018D07 /* HTTPMethod.swift */,
+				6ED3B454296B527100018D07 /* Interceptor.swift */,
+				6ED3B456296B538100018D07 /* BasicAuthentication.swift */,
 			);
 			name = Networking;
 			sourceTree = "<group>";
@@ -232,10 +238,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				6ED3B451296B40F000018D07 /* Model.swift in Sources */,
+				6ED3B455296B527100018D07 /* Interceptor.swift in Sources */,
 				6E203BF42969F26900F30F7B /* ItemsViewController.swift in Sources */,
 				6E203BF02969F26900F30F7B /* AppDelegate.swift in Sources */,
 				6ED3B44C296ADEA400018D07 /* HTTPMethod.swift in Sources */,
 				6ED3B453296B43F800018D07 /* DependenciesContainer.swift in Sources */,
+				6ED3B457296B538100018D07 /* BasicAuthentication.swift in Sources */,
 				6ED3B446296ADDE000018D07 /* APIService.swift in Sources */,
 				6E203BF22969F26900F30F7B /* SceneDelegate.swift in Sources */,
 				6ED3B448296ADDE900018D07 /* APIEndpoint.swift in Sources */,
