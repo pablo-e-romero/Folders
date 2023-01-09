@@ -27,7 +27,7 @@ struct Item: Decodable {
     let isDir: Bool
     let modificationDate: Date
     let name: String
-    let size: Int?
+    let size: Int64?
     let contentType: ContentType?
 }
 

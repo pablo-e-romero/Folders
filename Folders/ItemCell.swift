@@ -18,7 +18,8 @@ class ItemCell: UITableViewCell {
             var content = defaultContentConfiguration()
             content.image = item.flatMap { UIImage(systemName: $0.imageSystemName) }
             content.text = item?.name
-            content.secondaryText = item?.size
+            content.secondaryText = item?.details
+            content.secondaryTextProperties.color = .secondaryLabel
             contentConfiguration = content
         }
     }

@@ -32,8 +32,7 @@ struct ItemViewState {
     let isDir: Bool
     let imageSystemName: String
     let name: String
-    let size: String?
-    let modifiedAt: String?
+    let details: String
     let contentGroupType: ContentGroupType?
 }
 
@@ -43,13 +42,27 @@ extension ItemViewState: Hashable {
     }
 }
 
-private func formatSize(_ size: Int) -> String {
-    "12 KB"
+private func sizeFormatter(_ bytes: Int64) -> String {
+    switch bytes {
+       case 0..<1_024:
+         return "\(bytes) bytes"
+       case 1_024..<(1_024 * 1_024):
+         return "\(String(format: "%.2f", Double(bytes) / 1_024)) kb"
+       case 1_024..<(1_024 * 1_024 * 1_024):
+         return "\(String(format: "%.2f", Double(bytes) / (1_024 * 1_024))) mb"
+       case (1_024 * 1_024 * 1_024)...Int64.max:
+         return "\(String(format: "%.2f", Double(bytes) / (1_024 * 1_024 * 1_024))) gb"
+       default:
+         return "\(bytes) bytes"
+       }
 }
 
-private func formatDate(_ date: Date) -> String {
-    "123"
-}
+private var dateFormatter: DateFormatter = {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateStyle = .short
+    dateFormatter.timeStyle = .short
+    return dateFormatter
+}()
 
 extension ItemViewState {
     init(with model: Item) {
@@ -57,8 +70,12 @@ extension ItemViewState {
         isDir = model.isDir
         imageSystemName = model.isDir ? "folder" : model.contentType?.imageSystemName ?? "doc"
         name = model.name
-        size = model.size.map(formatSize)
-        modifiedAt = formatDate(model.modificationDate)
+        details = [
+            "\("Modified at".localized) \(dateFormatter.string(from: model.modificationDate))",
+            model.size.map(sizeFormatter)
+        ]
+        .compactMap { $0 }
+        .joined(separator: " - ")
         contentGroupType = model.contentType?.groupType
     }
 }
