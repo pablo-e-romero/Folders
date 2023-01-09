@@ -38,10 +38,10 @@ final class ItemDetailsViewController: UIViewController, MessagePresenter {
                 case .loading:
                     self.showLoading()
                 case let .updated(viewState):
-                    self.loadingView?.removeFromSuperview()
+                    self.removeLoading()
                     self.update(with: viewState)
                 case let .failure(error):
-                    self.loadingView?.removeFromSuperview()
+                    self.removeLoading()
                     self.presentError(error)
                 }
             }
@@ -86,8 +86,13 @@ final class ItemDetailsViewController: UIViewController, MessagePresenter {
     }
 
     private func showLoading() {
-        guard self.loadingView == nil else { return }
-        self.loadingView = LoadingView.createAndShow(on: self.view)
+        guard loadingView == nil else { return }
+        loadingView = LoadingView.createAndShow(on: self.view)
+    }
+
+    private func removeLoading() {
+        loadingView?.removeFromSuperview()
+        loadingView = nil
     }
 
 }

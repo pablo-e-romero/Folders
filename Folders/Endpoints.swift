@@ -61,7 +61,7 @@ extension APIEndpoint where ResultType == Item {
     static func createFolder(name: String, containedBy itemId: String) -> APIEndpoint {
         APIEndpoint(
             path: "/items/\(itemId)",
-            httpMethod: .post("{\"name\": \(name)}".data(using: .utf8)),
+            httpMethod: .post("{\"name\": \"\(name)\"}".data(using: .utf8)),
             httpHeaders: [
                 "Content-Type": "application/json"
             ],

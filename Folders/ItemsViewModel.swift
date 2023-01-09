@@ -26,7 +26,7 @@ final class ItemsViewModel {
     enum State {
         case initial(ItemsViewState)
         case loading
-        case uploading(progress: Float)
+        case adding
         case updated(ItemsViewState)
         case failure(Error)
     }
@@ -49,6 +49,20 @@ final class ItemsViewModel {
         )
         
         itemsRepository.itemsUpdatePublisher
+            .sink { [weak self, parentItem] items in
+                self?.stateSubject.send(
+                    .updated(ItemsViewState(
+                        title: parentItem.name,
+                        items: items.map(ItemViewState.init(with:))))
+                )
+            }
+            .store(in: &cancellables)
+    }
+
+    func fetch() {
+        stateSubject.send(.loading)
+
+        itemsRepository.items()
             .sink { [weak self] completion in
                 if case let .failure(error) = completion {
                     self?.stateSubject.send(.failure(error))
@@ -68,7 +82,25 @@ final class ItemsViewModel {
     }
 
     func createFolder(name: String) {
+        stateSubject.send(.adding)
 
+        itemsRepository.createFolder(name: name)
+            .sink { [weak self] completion in
+                if case let .failure(error) = completion {
+                    self?.stateSubject.send(.failure(error))
+                }
+            } receiveValue: { _ in }
+            .store(in: &cancellables)
+    }
+
+    func deleteItem(with itemId: String) {
+        itemsRepository.deleteItem(with: itemId)
+            .sink { [weak self] completion in
+                if case let .failure(error) = completion {
+                    self?.stateSubject.send(.failure(error))
+                }
+            } receiveValue: { _ in }
+            .store(in: &cancellables)
     }
 
 }

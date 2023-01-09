@@ -11,7 +11,7 @@ import Combine
 protocol ItemsRepositoryProtocol {
     var itemsUpdatePublisher: AnyPublisher<[Item], Never> { get }
 
-    func refresh() -> AnyPublisher<Void, Error>
+    func items() -> AnyPublisher<[Item], Error>
     func uploadFile(data: Data) -> AnyPublisher<Void, Error>
     func createFolder(name: String) -> AnyPublisher<Void, Error>
     func deleteItem(with itemId: String) -> AnyPublisher<Void, Error>
@@ -44,14 +44,6 @@ final class ItemsRepository: ItemsRepositoryProtocol {
     init(context: Context, parentItemId: String) {
         self.ctx = context
         self.parentItemId = parentItemId
-
-        self.items()
-            .sink(
-                receiveCompletion: { _ in },
-                receiveValue: { [weak self] items in
-                self?.itemsUpdateSubject.send(items)
-            })
-            .store(in: &cancellables)
     }
 
     func items() -> AnyPublisher<[Item], Error> {
@@ -69,18 +61,6 @@ final class ItemsRepository: ItemsRepositoryProtocol {
             .eraseToAnyPublisher()
 
         return Publishers.Merge(cachePublisher, remotePublisher).eraseToAnyPublisher()
-    }
-
-    func refresh() -> AnyPublisher<Void, Error> {
-        ctx.apiService.execute(endpoint: .items(containedBy: parentItemId))
-            .handleEvents(receiveOutput: { [weak self] items in
-                guard let self = self else { return }
-                self.currentItems = items
-                self.ctx.itemsCache.set(self.currentItems, for: self.parentItemId)
-                self.itemsUpdateSubject.send(self.currentItems)
-            })
-            .map { _ in return () }
-            .eraseToAnyPublisher()
     }
 
     func uploadFile(data: Data) -> AnyPublisher<Void, Error> {

@@ -41,10 +41,10 @@ final class AuthenticationViewController: UIViewController, MessagePresenter {
                 case .loading:
                     self.showLoading()
                 case let .authenciated(viewState):
-                    self.loadingView?.removeFromSuperview()
+                    self.removeLoading()
                     self.authenticatedCallback?(viewState)
                 case let .failure(error):
-                    self.loadingView?.removeFromSuperview()
+                    self.removeLoading()
                     self.presentError(error)
                 }
             }
@@ -57,8 +57,13 @@ final class AuthenticationViewController: UIViewController, MessagePresenter {
     }
 
     private func showLoading() {
-        guard self.loadingView == nil else { return }
-        self.loadingView = LoadingView.createAndShow(on: self.view)
+        guard loadingView == nil else { return }
+        loadingView = LoadingView.createAndShow(on: self.view)
+    }
+
+    private func removeLoading() {
+        loadingView?.removeFromSuperview()
+        loadingView = nil
     }
 
 }
