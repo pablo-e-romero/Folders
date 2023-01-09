@@ -66,16 +66,16 @@ final class ItemsViewController: UIViewController, MessagePresenter {
             .sink { [weak self] newSate in
                 guard let self = self else { return }
                 switch newSate {
-                case .initial:
-                    break
+                case let .initial(viewState):
+                    self.update(with: viewState)
+                    self.showLoading()
                 case .loading:
-                    guard self.loadingView == nil else { return }
-                    self.loadingView = LoadingView.createAndShow(on: self.view)
+                   break
                 case let .uploading(progress):
                     print("uploading \(progress)")
-                case let .updated(itemsViewState):
+                case let .updated(viewState):
                     self.loadingView?.removeFromSuperview()
-                    self.update(with: itemsViewState)
+                    self.update(with: viewState)
                 case let .failure(error):
                     self.loadingView?.removeFromSuperview()
                     self.presentError(error)
@@ -83,7 +83,7 @@ final class ItemsViewController: UIViewController, MessagePresenter {
             }
             .store(in: &cancellables)
 
-        viewModel.fetch()
+        viewModel.viewDidLoad()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -93,12 +93,17 @@ final class ItemsViewController: UIViewController, MessagePresenter {
         }
     }
 
-    private func update(with itemsViewState: ItemsViewState) {
-        title = itemsViewState.title
+    private func update(with viewState: ItemsViewState) {
+        title = viewState.title
         var snapshot = NSDiffableDataSourceSnapshot<Section, ItemViewState>()
         snapshot.appendSections([.main])
-        snapshot.appendItems(itemsViewState.items, toSection: .main)
+        snapshot.appendItems(viewState.items, toSection: .main)
         dataSource.apply(snapshot)
+    }
+
+    private func showLoading() {
+        guard self.loadingView == nil else { return }
+        self.loadingView = LoadingView.createAndShow(on: self.view)
     }
 
 }
@@ -106,7 +111,8 @@ final class ItemsViewController: UIViewController, MessagePresenter {
 extension ItemsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let item = (tableView.cellForRow(at: indexPath) as? ItemCell)?.item else {
-            fatalError("Missing item")
+            assertionFailure("Missing item")
+            return
         }
         self.showChildItemCallback?(item)
     }

@@ -10,7 +10,7 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    var itemsCoordinator: ItemsCoordinator?
+    var appCoordinator: AppCoordinator?
     var dependenciesContaier: DependenciesContainer?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -21,17 +21,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let navController = UINavigationController()
         let dependenciesContainer: DependenciesContainer = .live
 
-        let coordinator = ItemsCoordinator(
+        let coordinator = AppCoordinator(
             navController: navController,
             context: dependenciesContainer)
 
         window.rootViewController = navController
         window.makeKeyAndVisible()
 
-        coordinator.start(animated: true)
+        coordinator.start(animated: false)
 
         self.window = window
-        self.itemsCoordinator = coordinator
+        self.appCoordinator = coordinator
         self.dependenciesContaier = dependenciesContainer
     }
 

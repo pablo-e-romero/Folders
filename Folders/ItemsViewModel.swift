@@ -9,22 +9,22 @@ import Foundation
 import Combine
 
 protocol ItemsViewModelFactory {
-    func newItemsViewModel(parentItem: ItemViewState?) -> ItemsViewModel
+    func newItemsViewModel(parentItem: ItemViewState) -> ItemsViewModel
 }
 
 extension DependenciesContainer: ItemsViewModelFactory {
-    func newItemsViewModel(parentItem: ItemViewState?) -> ItemsViewModel {
+    func newItemsViewModel(parentItem: ItemViewState) -> ItemsViewModel {
         ItemsViewModel(ctx: self, parentItem: parentItem)
     }
 }
 
 final class ItemsViewModel {
-    typealias Context = HasAPIService
-    private let ctx: Context
-    private var parentItem: ItemViewState?
+    typealias Context = ItemsRepositoryFactory
+    private let itemsRepository: ItemsRepositoryProtocol
+    private let parentItem: ItemViewState
 
     enum State {
-        case initial
+        case initial(ItemsViewState)
         case loading
         case uploading(progress: Float)
         case updated(ItemsViewState)
@@ -38,34 +38,22 @@ final class ItemsViewModel {
     private let stateSubject = PassthroughSubject<State, Never>()
     private var cancellables = Set<AnyCancellable>()
 
-    init(ctx: Context, parentItem: ItemViewState?) {
-        self.ctx = ctx
+    init(ctx: Context, parentItem: ItemViewState) {
+        self.itemsRepository = ctx.newItemsRepository(parentItemId: parentItem.itemId)
         self.parentItem = parentItem
     }
 
-    func fetch() {
-        stateSubject.send(.loading)
-
-        guard let parentItem = parentItem else {
-            ctx.apiService.execute(endpoint: .me)
-                .sink { [weak self] completion in
-                    if case let .failure(error) = completion {
-                        self?.stateSubject.send(.failure(error))
-                    }
-                } receiveValue: { [weak self] me in
-                    self?.parentItem = ItemViewState(with: me.rootItem)
-                    self?.fetch()
-                }
-                .store(in: &cancellables)
-            return
-        }
-
-        ctx.apiService.execute(endpoint: .items(containedBy: parentItem.itemId))
+    func viewDidLoad() {
+        stateSubject.send(
+            .initial(ItemsViewState(title: parentItem.name))
+        )
+        
+        itemsRepository.itemsUpdatePublisher
             .sink { [weak self] completion in
                 if case let .failure(error) = completion {
                     self?.stateSubject.send(.failure(error))
                 }
-            } receiveValue: { [weak self] items in
+            } receiveValue: { [weak self, parentItem] items in
                 self?.stateSubject.send(
                     .updated(ItemsViewState(
                         title: parentItem.name,

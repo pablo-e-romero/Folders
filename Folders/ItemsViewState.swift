@@ -9,26 +9,32 @@ import Foundation
 
 struct ItemsViewState {
     let title: String
-    let subtitle: String
     let items: [ItemViewState]
 }
 
 extension ItemsViewState {
-    init(title: String, items: [ItemViewState]) {
+    init(title: String) {
         self.title = title
-        let count = items.count
-        self.subtitle = "\(count) \(count == 1 ? "item".localized : "items".localized)"
-        self.items = items
+        self.items = []
     }
 }
 
 struct ItemViewState {
+    enum ContentGroupType {
+        case audio
+        case image
+        case text
+        case video
+        case unknown
+    }
+
     let itemId: String
     let isDir: Bool
     let imageSystemName: String
     let name: String
     let size: String?
     let modifiedAt: String?
+    let contentGroupType: ContentGroupType?
 }
 
 extension ItemViewState: Hashable {
@@ -53,6 +59,7 @@ extension ItemViewState {
         name = model.name
         size = model.size.map(formatSize)
         modifiedAt = formatDate(model.modificationDate)
+        contentGroupType = model.contentType?.groupType
     }
 }
 
@@ -64,6 +71,16 @@ extension ContentType {
         case .textCSS, .textCSV, .textHTML, .textJavascriot, .textPlan, .textXML: return "doc.text"
         case .videoMPEG, .videoMP4, .videoQuicktime, .videoXMSWMV, .videoXMSVideo, .videoXFLV, .videoWEBM: return "film"
         default: return "doc"
+        }
+    }
+
+    var groupType: ItemViewState.ContentGroupType {
+        switch self {
+        case .audioMPEG, .audioWMA, .audioRealAudio, .audioWAV: return .audio
+        case .imageGIF, .imageJPEG, .imagePNG, .imageTIFF, .imageVNDMicrosoftIcon, .imageXIcon, .imageVNDDjvu, .imageSVGXML: return .image
+        case .textCSS, .textCSV, .textHTML, .textJavascriot, .textPlan, .textXML: return .text
+        case .videoMPEG, .videoMP4, .videoQuicktime, .videoXMSWMV, .videoXMSVideo, .videoXFLV, .videoWEBM: return .video
+        default: return .unknown
         }
     }
 }
