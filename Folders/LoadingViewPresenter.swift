@@ -1,11 +1,43 @@
 //
-//  LoadingView.swift
+//  LoadingViewPresenter.swift
 //  Folders
 //
 //  Created by Pablo Ezequiel Romero Giovannoni on 08/01/2023.
 //
 
 import UIKit
+
+protocol LoadingViewPresenter {
+    func presentLoadingView()
+    func removeLoadingView()
+}
+
+private struct AssociatedKeys {
+    static var LoadingView = "LoadingView"
+}
+
+extension LoadingViewPresenter where Self: UIViewController {
+
+    private var loadingView: LoadingView? {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.LoadingView) as? LoadingView
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.LoadingView, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+
+    func presentLoadingView() {
+        guard loadingView == nil else { return }
+        loadingView = LoadingView.createAndShow(on: self.view)
+    }
+
+    func removeLoadingView() {
+        loadingView?.removeFromSuperview()
+        loadingView = nil
+    }
+
+}
 
 final class LoadingView: UIView {
 

@@ -8,7 +8,7 @@
 import UIKit
 import Combine
 
-final class ItemsViewController: UIViewController, MessagePresenter, ImagePickerPresenter {
+final class ItemsViewController: UIViewController, MessagePresenter, LoadingViewPresenter, ImagePickerPresenter {
 
     private lazy var tableView: UITableView = {
         let tableView =  UITableView(frame: .zero, style: .plain)
@@ -45,7 +45,6 @@ final class ItemsViewController: UIViewController, MessagePresenter, ImagePicker
 
     private var dataSource: ItemsDiffableDataSource!
 
-    private var loadingView: LoadingView?
     private let viewModel: ItemsViewModel
     private var cancellables = Set<AnyCancellable>()
 
@@ -65,7 +64,52 @@ final class ItemsViewController: UIViewController, MessagePresenter, ImagePicker
 
         view.backgroundColor = .systemBackground
         navigationItem.rightBarButtonItem = addButton
-        
+
+        configureTableView()
+        configureRefreshControl()
+
+        viewModel.statePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newSate in
+                guard let self = self else { return }
+                switch newSate {
+                case let .initial(viewState):
+                    self.update(with: viewState)
+                case .loading:
+                    self.presentLoadingView()
+                case .adding:
+                    self.presentLoadingView()
+                case let .updated(viewState):
+                    self.removeLoadingView()
+                    self.tableView.refreshControl?.endRefreshing()
+                    self.update(with: viewState)
+                case let .failure(error):
+                    self.removeLoadingView()
+                    self.tableView.refreshControl?.endRefreshing()
+                    self.presentError(error)
+                }
+            }
+            .store(in: &cancellables)
+
+        viewModel.viewDidLoad()
+        viewModel.fetch()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let selectedIndexPath = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: selectedIndexPath, animated: true)
+        }
+    }
+
+    private func configureRefreshControl() {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshControlAction(_:)), for: .valueChanged)
+
+        tableView.refreshControl = refreshControl
+    }
+
+    private func configureTableView() {
         view.addSubview(tableView)
 
         NSLayoutConstraint.activate([
@@ -84,54 +128,14 @@ final class ItemsViewController: UIViewController, MessagePresenter, ImagePicker
         dataSource.deleteHandler = { [weak self] item in
             self?.viewModel.deleteItem(with: item.itemId)
         }
-        
+
         dataSource.defaultRowAnimation = .none
-
-        viewModel.statePublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] newSate in
-                guard let self = self else { return }
-                switch newSate {
-                case let .initial(viewState):
-                    self.update(with: viewState)
-                case .loading:
-                    self.showLoading()
-                case .adding:
-                    self.showLoading()
-                case let .updated(viewState):
-                    self.removeLoading()
-                    self.update(with: viewState)
-                case let .failure(error):
-                    self.removeLoading()
-                    self.presentError(error)
-                }
-            }
-            .store(in: &cancellables)
-
-        viewModel.viewDidLoad()
-        viewModel.fetch()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        if let selectedIndexPath = tableView.indexPathForSelectedRow {
-            tableView.deselectRow(at: selectedIndexPath, animated: true)
-        }
+        tableView.backgroundColor = .systemBackground
     }
 
     private func update(with viewState: ItemsViewState) {
         title = viewState.title
         dataSource.update(with: viewState.items)
-    }
-
-    private func showLoading() {
-        guard loadingView == nil else { return }
-        loadingView = LoadingView.createAndShow(on: self.view)
-    }
-
-    private func removeLoading() {
-        loadingView?.removeFromSuperview()
-        loadingView = nil
     }
 
     private func createFolder() {
@@ -169,6 +173,10 @@ final class ItemsViewController: UIViewController, MessagePresenter, ImagePicker
                     self?.viewModel.uploadFile(name: name, data: data)
                 }
         }
+    }
+
+    @objc func refreshControlAction(_ sender: AnyObject) {
+        viewModel.fetch(isRefresh: true)
     }
 
 }

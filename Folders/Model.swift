@@ -7,6 +7,14 @@
 
 import Foundation
 
+struct ErrorResponse: Decodable {
+    let error: String?
+}
+
+extension ErrorResponse: APIErrorProtocol {
+    var message: String? { error }
+}
+
 struct Me: Decodable {
     let firstName: String
     let lastName: String

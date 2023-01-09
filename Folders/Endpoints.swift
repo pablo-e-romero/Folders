@@ -21,7 +21,7 @@ private let decoderISO8601: JSONDecoder = {
     return decoder
 }()
 
-extension APIEndpoint where ResultType == Me {
+extension APIEndpoint where ResultType == Me, ErrorType == ErrorResponse {
     static var me: APIEndpoint {
         APIEndpoint(
             path: "/me",
@@ -33,7 +33,7 @@ extension APIEndpoint where ResultType == Me {
     }
 }
 
-extension APIEndpoint where ResultType == [Item] {
+extension APIEndpoint where ResultType == [Item], ErrorType == ErrorResponse {
     static func items(containedBy itemId: String) -> APIEndpoint {
         APIEndpoint(
             path: "/items/\(itemId)",
@@ -45,7 +45,7 @@ extension APIEndpoint where ResultType == [Item] {
     }
 }
 
-extension APIEndpoint where ResultType == Item {
+extension APIEndpoint where ResultType == Item, ErrorType == ErrorResponse {
     static func uploadFile(name: String, data: Data, containedBy itemId: String) -> APIEndpoint {
         APIEndpoint(
             path: "/items/\(itemId)",
@@ -70,24 +70,26 @@ extension APIEndpoint where ResultType == Item {
     }
 }
 
-extension APIEndpoint where ResultType == Void {
+extension APIEndpoint where ResultType == Void, ErrorType == ErrorResponse {
     static func deleteItem(with itemId: String) -> APIEndpoint {
         APIEndpoint(
             path: "/items/\(itemId)",
             httpMethod: .delete,
-            decode: { _ in return () }
+            decodeResponse: { _ in return () },
+            decodeError: { try decoder.decode(ErrorResponse.self, from: $0) }
         )
     }
 }
 
-extension APIEndpoint where ResultType == Data {
+extension APIEndpoint where ResultType == Data, ErrorType == ErrorResponse {
     static func downloadItem(with itemId: String) -> APIEndpoint {
         APIEndpoint(
             path: "/items/\(itemId)/data",
             httpHeaders: [
                 "Content-Type": "application/octet-stream"
             ],
-            decode: { $0 }
+            decodeResponse: { $0 },
+            decodeError: { try decoder.decode(ErrorResponse.self, from: $0) }
         )
     }
 }

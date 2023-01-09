@@ -8,9 +8,8 @@
 import UIKit
 import Combine
 
-final class AuthenticationViewController: UIViewController, MessagePresenter {
+final class AuthenticationViewController: UIViewController, MessagePresenter, LoadingViewPresenter {
 
-    private var loadingView: LoadingView?
     private let viewModel: AuthenticationViewModel
     private var cancellables = Set<AnyCancellable>()
 
@@ -39,12 +38,12 @@ final class AuthenticationViewController: UIViewController, MessagePresenter {
                 case .initial:
                     break
                 case .loading:
-                    self.showLoading()
+                    self.presentLoadingView()
                 case let .authenciated(viewState):
-                    self.removeLoading()
+                    self.removeLoadingView()
                     self.authenticatedCallback?(viewState)
                 case let .failure(error):
-                    self.removeLoading()
+                    self.removeLoadingView()
                     self.presentError(error)
                 }
             }
@@ -54,16 +53,6 @@ final class AuthenticationViewController: UIViewController, MessagePresenter {
         
         // TODO: create some UI to input these values
         viewModel.authenticate(username: "noel", password: "foobar")
-    }
-
-    private func showLoading() {
-        guard loadingView == nil else { return }
-        loadingView = LoadingView.createAndShow(on: self.view)
-    }
-
-    private func removeLoading() {
-        loadingView?.removeFromSuperview()
-        loadingView = nil
     }
 
 }

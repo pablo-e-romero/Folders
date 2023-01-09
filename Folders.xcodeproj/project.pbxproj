@@ -33,7 +33,7 @@
 		6ED3B466296B793500018D07 /* MessagePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3B465296B793500018D07 /* MessagePresenter.swift */; };
 		6ED3B468296B794A00018D07 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3B467296B794A00018D07 /* Coordinator.swift */; };
 		6ED3B46A296B797F00018D07 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3B469296B797F00018D07 /* String+.swift */; };
-		6ED3B46C296B7ACC00018D07 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3B46B296B7ACC00018D07 /* LoadingView.swift */; };
+		6ED3B46C296B7ACC00018D07 /* LoadingViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3B46B296B7ACC00018D07 /* LoadingViewPresenter.swift */; };
 		6ED3B46F296B7D3C00018D07 /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3B46E296B7D3C00018D07 /* ItemCell.swift */; };
 		6ED3B471296B89A700018D07 /* ItemsViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3B470296B89A700018D07 /* ItemsViewState.swift */; };
 		6ED3B473296B97E200018D07 /* ItemDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3B472296B97E200018D07 /* ItemDetailsViewController.swift */; };
@@ -83,7 +83,7 @@
 		6ED3B465296B793500018D07 /* MessagePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePresenter.swift; sourceTree = "<group>"; };
 		6ED3B467296B794A00018D07 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		6ED3B469296B797F00018D07 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
-		6ED3B46B296B7ACC00018D07 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		6ED3B46B296B7ACC00018D07 /* LoadingViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewPresenter.swift; sourceTree = "<group>"; };
 		6ED3B46E296B7D3C00018D07 /* ItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; };
 		6ED3B470296B89A700018D07 /* ItemsViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsViewState.swift; sourceTree = "<group>"; };
 		6ED3B472296B97E200018D07 /* ItemDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailsViewController.swift; sourceTree = "<group>"; };
@@ -239,7 +239,7 @@
 			isa = PBXGroup;
 			children = (
 				6ED3B465296B793500018D07 /* MessagePresenter.swift */,
-				6ED3B46B296B7ACC00018D07 /* LoadingView.swift */,
+				6ED3B46B296B7ACC00018D07 /* LoadingViewPresenter.swift */,
 				6EAD9345296C8AF900F2211F /* ImagePickerPresenter.swift */,
 			);
 			name = "UI Components";
@@ -395,7 +395,7 @@
 				6ED3B45D296B581400018D07 /* ItemsViewModel.swift in Sources */,
 				6ED3B44F296B40E400018D07 /* Endpoints.swift in Sources */,
 				6ED3B466296B793500018D07 /* MessagePresenter.swift in Sources */,
-				6ED3B46C296B7ACC00018D07 /* LoadingView.swift in Sources */,
+				6ED3B46C296B7ACC00018D07 /* LoadingViewPresenter.swift in Sources */,
 				6ED3B44A296ADE5300018D07 /* APIError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

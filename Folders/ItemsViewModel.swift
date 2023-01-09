@@ -59,9 +59,11 @@ final class ItemsViewModel {
             .store(in: &cancellables)
     }
 
-    func fetch() {
-        stateSubject.send(.loading)
-
+    func fetch(isRefresh: Bool = false) {
+        if !isRefresh {
+            stateSubject.send(.loading)
+        }
+        
         itemsRepository.items()
             .sink { [weak self] completion in
                 if case let .failure(error) = completion {

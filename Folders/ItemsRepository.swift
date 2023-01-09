@@ -68,6 +68,7 @@ final class ItemsRepository: ItemsRepositoryProtocol {
             .handleEvents(receiveOutput: { [weak self] item in
                 guard let self = self else { return }
                 self.currentItems.append(item)
+                self.currentItems.sort(by: { $0.name < $1.name })
                 self.ctx.itemsCache.set(self.currentItems, for: self.parentItemId)
                 self.itemsUpdateSubject.send(self.currentItems)
             })
@@ -80,6 +81,7 @@ final class ItemsRepository: ItemsRepositoryProtocol {
             .handleEvents(receiveOutput: { [weak self] item in
                 guard let self = self else { return }
                 self.currentItems.append(item)
+                self.currentItems.sort(by: { $0.name < $1.name })
                 self.ctx.itemsCache.set(self.currentItems, for: self.parentItemId)
                 self.itemsUpdateSubject.send(self.currentItems)
             })

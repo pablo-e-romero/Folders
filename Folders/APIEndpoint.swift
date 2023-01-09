@@ -7,25 +7,28 @@
 
 import Foundation
 
-struct APIEndpoint<ResultType> {
+struct APIEndpoint<ResultType, ErrorType: APIErrorProtocol> {
     private let path: String
     private let httpMethod: HTTPMethod
     private let queryParameters: [String: CustomStringConvertible]?
     private let httpHeaders: [String: CustomStringConvertible]?
-    let decode: (Data) throws -> ResultType
+    let decodeResponse: (Data) throws -> ResultType
+    let decodeError: (Data) throws -> ErrorType
 
     init(
         path: String,
         httpMethod: HTTPMethod = .get,
         queryParameters: [String: CustomStringConvertible]? = nil,
         httpHeaders: [String: CustomStringConvertible]? = nil,
-        decode: @escaping (Data) throws -> ResultType
+        decodeResponse: @escaping (Data) throws -> ResultType,
+        decodeError: @escaping (Data) throws -> ErrorType
     ) {
         self.path = path
         self.httpMethod = httpMethod
         self.queryParameters = queryParameters
         self.httpHeaders = httpHeaders
-        self.decode = decode
+        self.decodeResponse = decodeResponse
+        self.decodeError = decodeError
     }
 
     func createURLRequest(baseURL: URL) -> URLRequest {
@@ -60,7 +63,7 @@ struct APIEndpoint<ResultType> {
     }
 }
 
-extension APIEndpoint where ResultType: Decodable {
+extension APIEndpoint where ResultType: Decodable, ErrorType: Decodable {
     init(
         path: String,
         httpMethod: HTTPMethod = .get,
@@ -73,6 +76,8 @@ extension APIEndpoint where ResultType: Decodable {
             httpMethod: httpMethod,
             queryParameters: queryParameters,
             httpHeaders: httpHeaders,
-            decode: { try decoder.decode(ResultType.self, from: $0) } )
+            decodeResponse: { try decoder.decode(ResultType.self, from: $0) },
+            decodeError: { try decoder.decode(ErrorType.self, from: $0) }
+        )
     }
 }

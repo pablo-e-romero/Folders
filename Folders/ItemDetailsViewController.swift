@@ -8,9 +8,8 @@
 import UIKit
 import Combine
 
-final class ItemDetailsViewController: UIViewController, MessagePresenter {
+final class ItemDetailsViewController: UIViewController, MessagePresenter, LoadingViewPresenter {
     private var contentView: UIView?
-    private var loadingView: LoadingView?
     private let viewModel: ItemDetailsViewModel
     private var cancellables = Set<AnyCancellable>()
 
@@ -36,12 +35,12 @@ final class ItemDetailsViewController: UIViewController, MessagePresenter {
                 case let .initial(viewState):
                     self.update(with: viewState)
                 case .loading:
-                    self.showLoading()
+                    self.presentLoadingView()
                 case let .updated(viewState):
-                    self.removeLoading()
+                    self.removeLoadingView()
                     self.update(with: viewState)
                 case let .failure(error):
-                    self.removeLoading()
+                    self.removeLoadingView()
                     self.presentError(error)
                 }
             }
@@ -83,16 +82,6 @@ final class ItemDetailsViewController: UIViewController, MessagePresenter {
     private func removeContent() {
         contentView?.removeFromSuperview()
         contentView = nil
-    }
-
-    private func showLoading() {
-        guard loadingView == nil else { return }
-        loadingView = LoadingView.createAndShow(on: self.view)
-    }
-
-    private func removeLoading() {
-        loadingView?.removeFromSuperview()
-        loadingView = nil
     }
 
 }

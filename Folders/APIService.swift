@@ -10,7 +10,7 @@ import Foundation
 import Combine
 
 protocol APIServiceProtocol {
-    func execute<ResultType>(endpoint: APIEndpoint<ResultType>) -> AnyPublisher<ResultType, Error>
+    func execute<ResultType, ErrorType>(endpoint: APIEndpoint<ResultType, ErrorType>) -> AnyPublisher<ResultType, Error>
 }
 
 final class APIService {
@@ -25,7 +25,7 @@ final class APIService {
 
 extension APIService: APIServiceProtocol {
 
-    func execute<ResultType>(endpoint: APIEndpoint<ResultType>) -> AnyPublisher<ResultType, Error> {
+    func execute<ResultType, ErrorType>(endpoint: APIEndpoint<ResultType, ErrorType>) -> AnyPublisher<ResultType, Error> {
 
         let urlRequest = interceptors.map { interceptors in
             interceptors.reduce(endpoint.createURLRequest(baseURL: baseURL)) { partialResult, interceptor in
@@ -38,9 +38,10 @@ extension APIService: APIServiceProtocol {
                 let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 200
 
                 if 200..<300 ~= statusCode {
-                    return try endpoint.decode(data)
+                    return try endpoint.decodeResponse(data)
                 } else {
-                    throw APIError.apiError(statusCode: statusCode)
+                    let errorResponse = try? endpoint.decodeError(data)
+                    throw APIError.apiError(code: statusCode, message: errorResponse?.message)
                 }
             }
             .eraseToAnyPublisher()
