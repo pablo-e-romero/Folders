@@ -9,18 +9,26 @@ import Foundation
 
 private let decoder: JSONDecoder = {
     let decoder = JSONDecoder()
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+    decoder.dateDecodingStrategy = .formatted(dateFormatter)
+    return decoder
+}()
+
+private let decoderISO8601: JSONDecoder = {
+    let decoder = JSONDecoder()
     decoder.dateDecodingStrategy = .iso8601
     return decoder
 }()
 
 extension APIEndpoint where ResultType == Me {
-    static func me() -> APIEndpoint {
+    static var me: APIEndpoint {
         APIEndpoint(
             path: "/me",
             httpHeaders: [
                 "Content-Type": "application/json"
             ],
-            decoder: decoder
+            decoder: decoderISO8601
         )
     }
 }

@@ -10,12 +10,12 @@ import Foundation
 struct Me: Decodable {
     let firstName: String
     let lastName: String
-    let rootItem: String
+    let rootItem: Item
 }
 
 struct Item: Decodable {
     let id: String
-    let parentId: String?
+    let parentId: String
     let isDir: Bool
     let modificationDate: Date
     let name: String

@@ -19,13 +19,17 @@ final class DependenciesContainer {
 
 extension DependenciesContainer {
     static var live: DependenciesContainer {
+        let baseURL = URL(string: "http://163.172.147.216:8080")!
+        let basicAuthorization = BasicAuthentication(
+            credentials: (username: "noel", password: "foobar")
+        )
+
         return .init(
             apiService: APIService(
-                baseURL: URL(string: "http://163.172.147.216:8080")!
+                baseURL: baseURL,
+                interceptors: [basicAuthorization.interceptor]
             ),
-            basicAuthorization: BasicAuthentication(
-                credentials: (username: "noel", password: "foobar")
-            )
+            basicAuthorization: basicAuthorization
         )
     }
 }

@@ -34,8 +34,14 @@ extension APIService: APIServiceProtocol {
         } ?? endpoint.createURLRequest(baseURL: baseURL)
 
         return URLSession.shared.dataTaskPublisher(for: urlRequest)
-            .tryMap { data, _ in
-                try endpoint.decode(data)
+            .tryMap { data, response in
+                let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 200
+
+                if 200..<300 ~= statusCode {
+                    return try endpoint.decode(data)
+                } else {
+                    throw APIError.apiError(statusCode: statusCode)
+                }
             }
             .eraseToAnyPublisher()
     }

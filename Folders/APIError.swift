@@ -8,14 +8,14 @@
 import Foundation
 
 enum APIError: Error {
-    case apiError(code: Int, message: String)
+    case apiError(statusCode: Int)
 }
 
 extension APIError: LocalizedError {
     var errorDescription: String? {
         switch self {
-        case let .apiError(code, message):
-            return "\(message) (\(code))"
+        case let .apiError(statusCode):
+            return "Error status code: (\(statusCode))"
         }
     }
 }
