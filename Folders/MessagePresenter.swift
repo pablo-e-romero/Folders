@@ -67,7 +67,6 @@ extension MessagePresenter where Self: UIViewController {
         alertController.addAction(cancelAction)
 
         present(alertController, animated: true, completion: nil)
-
     }
 }
 

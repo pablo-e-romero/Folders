@@ -12,7 +12,7 @@ protocol ItemsRepositoryProtocol {
     var itemsUpdatePublisher: AnyPublisher<[Item], Never> { get }
 
     func items() -> AnyPublisher<[Item], Error>
-    func uploadFile(data: Data) -> AnyPublisher<Void, Error>
+    func uploadFile(name: String, data: Data) -> AnyPublisher<Void, Error>
     func createFolder(name: String) -> AnyPublisher<Void, Error>
     func deleteItem(with itemId: String) -> AnyPublisher<Void, Error>
 }
@@ -63,8 +63,8 @@ final class ItemsRepository: ItemsRepositoryProtocol {
         return Publishers.Merge(cachePublisher, remotePublisher).eraseToAnyPublisher()
     }
 
-    func uploadFile(data: Data) -> AnyPublisher<Void, Error> {
-        ctx.apiService.execute(endpoint: .uploadFile(data: data, containedBy: parentItemId))
+    func uploadFile(name: String, data: Data) -> AnyPublisher<Void, Error> {
+        ctx.apiService.execute(endpoint: .uploadFile(name: name, data: data, containedBy: parentItemId))
             .handleEvents(receiveOutput: { [weak self] item in
                 guard let self = self else { return }
                 self.currentItems.append(item)

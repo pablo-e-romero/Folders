@@ -77,8 +77,16 @@ final class ItemsViewModel {
             .store(in: &cancellables)
     }
 
-    func uploadFile(data: Data) {
+    func uploadFile(name: String, data: Data) {
+        stateSubject.send(.adding)
 
+        itemsRepository.uploadFile(name: name, data: data)
+            .sink { [weak self] completion in
+                if case let .failure(error) = completion {
+                    self?.stateSubject.send(.failure(error))
+                }
+            } receiveValue: { _ in }
+            .store(in: &cancellables)
     }
 
     func createFolder(name: String) {

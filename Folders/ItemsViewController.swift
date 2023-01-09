@@ -8,7 +8,7 @@
 import UIKit
 import Combine
 
-final class ItemsViewController: UIViewController, MessagePresenter {
+final class ItemsViewController: UIViewController, MessagePresenter, ImagePickerPresenter {
 
     private lazy var tableView: UITableView = {
         let tableView =  UITableView(frame: .zero, style: .plain)
@@ -19,22 +19,28 @@ final class ItemsViewController: UIViewController, MessagePresenter {
     }()
 
     private lazy var addButton: UIBarButtonItem = {
-        let uploadPictureAction = UIAction(
-            title: "Upload a local picture",
-            image: UIImage(systemName: "photo")) { [weak self] _ in
-                self?.uploadPicture()
-        }
-
         let createFolderAction = UIAction(
             title: "Create a folder",
             image: UIImage(systemName: "folder.badge.plus")) { [weak self] _ in
                 self?.createFolder()
         }
 
+        let uploadFromPhotoLibraryAction = UIAction(
+            title: "Upload from the photo library",
+            image: UIImage(systemName: "photo")) { [weak self] _ in
+                self?.uploadPicture(sourceType: .photoLibrary)
+        }
+
+        let uploadFromCameraAction = UIAction(
+            title: "Upload from camera",
+            image: UIImage(systemName: "camera")) { [weak self] _ in
+                self?.uploadPicture(sourceType: .camera)
+        }
+
         return UIBarButtonItem(
             systemItem: .add,
             primaryAction: nil,
-            menu: UIMenu(children: [uploadPictureAction, createFolderAction]))
+            menu: UIMenu(children: [createFolderAction, uploadFromPhotoLibraryAction, uploadFromCameraAction]))
     }()
 
     private var dataSource: ItemsDiffableDataSource!
@@ -132,7 +138,7 @@ final class ItemsViewController: UIViewController, MessagePresenter {
         presentInput(
             title: "Create folder".localized,
             message: nil,
-            placeholder: "Enter folder name") { [weak self] folderName in
+            placeholder: "Enter folder name".localized) { [weak self] folderName in
                 guard let folderName = folderName else {
                     return
                 }
@@ -140,8 +146,29 @@ final class ItemsViewController: UIViewController, MessagePresenter {
             }
     }
 
-    private func uploadPicture() {
+    private func uploadPicture(sourceType: ImagePickerSource) {
+#if targetEnvironment(simulator)
+        guard sourceType == .photoLibrary else {
+            presentError("This feature works on a real device only.")
+            return
+        }
+#endif
+        presentImagePicker(sourceType: sourceType) { [weak self] data in
+            guard let data = data else {
+                return
+            }
 
+            self?.presentInput(
+                title: "Upload picture",
+                message: nil,
+                placeholder: "Enter picture name") { name in
+                    guard let name = name else {
+                        return
+                    }
+
+                    self?.viewModel.uploadFile(name: name, data: data)
+                }
+        }
     }
 
 }

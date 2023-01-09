@@ -46,13 +46,13 @@ extension APIEndpoint where ResultType == [Item] {
 }
 
 extension APIEndpoint where ResultType == Item {
-    static func uploadFile(data: Data, containedBy itemId: String) -> APIEndpoint {
+    static func uploadFile(name: String, data: Data, containedBy itemId: String) -> APIEndpoint {
         APIEndpoint(
             path: "/items/\(itemId)",
             httpMethod: .post(data),
             httpHeaders: [
                 "Content-Type": "application/octet-stream",
-                "Content-Disposition": "attachment;filename*=utf-8''picture.jpg"
+                "Content-Disposition": "attachment;filename*=utf-8''\(name).jpg"
             ],
             decoder: decoder
         )
