@@ -79,6 +79,8 @@ final class ItemsViewController: UIViewController, MessagePresenter, LoadingView
                     self.presentLoadingView()
                 case .adding:
                     self.presentLoadingView()
+                case .deleting:
+                    break
                 case let .updated(viewState):
                     self.removeLoadingView()
                     self.tableView.refreshControl?.endRefreshing()

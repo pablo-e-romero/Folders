@@ -1,0 +1,47 @@
+[{
+    "id": "b2bb0a099b315c5735f3fb43488f55e00df47893",
+    "parentId": "37678569f292d88ba1abd9c583fa99c2bc2d0650",
+    "name": "b",
+    "isDir": true,
+    "modificationDate": "2023-01-09T21:46:05.441142057Z"
+}, {
+    "id": "4ac1469dbb1fa56819b18809694d10adb91f730e",
+    "parentId": "37678569f292d88ba1abd9c583fa99c2bc2d0650",
+    "name": "c",
+    "isDir": true,
+    "modificationDate": "2023-01-09T21:46:36.361464043Z"
+}, {
+    "id": "dc4154ea98d3be07568b236d4ccc59dabdf2538d",
+    "parentId": "37678569f292d88ba1abd9c583fa99c2bc2d0650",
+    "name": "d",
+    "isDir": true,
+    "modificationDate": "2023-01-09T22:03:17.083467313Z"
+}, {
+    "id": "8600d5df1eecd26af82c978b9636fbee4f5599b5",
+    "parentId": "37678569f292d88ba1abd9c583fa99c2bc2d0650",
+    "name": "gaby",
+    "isDir": true,
+    "modificationDate": "2023-01-09T20:41:03.240241918Z"
+}, {
+    "id": "089b78234ff8f9927b20979e6523e8e96e62a68d",
+    "parentId": "37678569f292d88ba1abd9c583fa99c2bc2d0650",
+    "name": "internal folder",
+    "isDir": true,
+    "modificationDate": "2023-01-09T20:39:37.991351663Z"
+}, {
+    "id": "fe1b2eb74946b3bad2adab897b05d2e0b814cb33",
+    "parentId": "37678569f292d88ba1abd9c583fa99c2bc2d0650",
+    "name": "r.jpg",
+    "isDir": false,
+    "size": 693372,
+    "contentType": "image/jpeg",
+    "modificationDate": "2023-01-09T21:51:23.708457888Z"
+}, {
+    "id": "89ffb11c14108776f9fbc47ce864d798c900de41",
+    "parentId": "37678569f292d88ba1abd9c583fa99c2bc2d0650",
+    "name": "test3.jpg",
+    "isDir": false,
+    "size": 493407,
+    "contentType": "image/jpeg",
+    "modificationDate": "2023-01-09T18:44:56.240046335Z"
+}]

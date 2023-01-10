@@ -27,6 +27,7 @@ final class ItemsViewModel {
         case initial(ItemsViewState)
         case loading
         case adding
+        case deleting
         case updated(ItemsViewState)
         case failure(Error)
     }
@@ -104,6 +105,8 @@ final class ItemsViewModel {
     }
 
     func deleteItem(with itemId: String) {
+        stateSubject.send(.deleting)
+
         itemsRepository.deleteItem(with: itemId)
             .sink { [weak self] completion in
                 if case let .failure(error) = completion {
