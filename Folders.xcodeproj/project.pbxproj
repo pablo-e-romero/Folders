@@ -162,7 +162,7 @@
 				6ED3B458296B57CA00018D07 /* View */,
 				6ED3B460296B5A5900018D07 /* Repository */,
 				6ED3B463296B5A8F00018D07 /* Cache */,
-				6ED3B46D296B7AE000018D07 /* UI Components */,
+				6ED3B46D296B7AE000018D07 /* Presenters */,
 				6ED3B464296B792300018D07 /* Core */,
 				6ED3B44D296B3F9A00018D07 /* API */,
 				6ED3B444296ADDAA00018D07 /* Networking */,
@@ -287,14 +287,14 @@
 			name = Core;
 			sourceTree = "<group>";
 		};
-		6ED3B46D296B7AE000018D07 /* UI Components */ = {
+		6ED3B46D296B7AE000018D07 /* Presenters */ = {
 			isa = PBXGroup;
 			children = (
 				6ED3B465296B793500018D07 /* MessagePresenter.swift */,
 				6ED3B46B296B7ACC00018D07 /* LoadingViewPresenter.swift */,
 				6EAD9345296C8AF900F2211F /* ImagePickerPresenter.swift */,
 			);
-			name = "UI Components";
+			name = Presenters;
 			sourceTree = "<group>";
 		};
 		6ED3B474296B99E100018D07 /* Items */ = {

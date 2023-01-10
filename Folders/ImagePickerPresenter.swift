@@ -14,11 +14,15 @@ enum ImagePickerSource {
 }
 
 protocol ImagePickerPresenter {
-    func presentImagePicker(sourceType: ImagePickerSource, completion: @escaping (Data?) -> Void)
+    func presentImagePicker(sourceType: ImagePickerSource, completion: @escaping (Result<Data, Error>) -> Void)
 }
 
 private struct AssociatedKeys {
     static var ImagePicker = "ImagePicker"
+}
+
+enum ImagePickerError: Error {
+    case unknownError
 }
 
 extension ImagePickerPresenter where Self: UIViewController {
@@ -32,7 +36,7 @@ extension ImagePickerPresenter where Self: UIViewController {
         }
     }
 
-    func presentImagePicker(sourceType: ImagePickerSource, completion: @escaping (Data?) -> Void) {
+    func presentImagePicker(sourceType: ImagePickerSource, completion: @escaping (Result<Data, Error>) -> Void) {
         switch sourceType {
         case .camera:
             self.imagePicker = CameraPicker(parentViewController: self)
@@ -40,9 +44,9 @@ extension ImagePickerPresenter where Self: UIViewController {
             self.imagePicker = PhotoLibraryPicker(parentViewController: self)
         }
 
-        imagePicker?.completionHandler = { [weak self] data in
+        imagePicker?.completionHandler = { [weak self] result in
             DispatchQueue.main.async {
-                completion(data)
+                completion(result)
             }
             self?.imagePicker = nil
         }
@@ -51,11 +55,11 @@ extension ImagePickerPresenter where Self: UIViewController {
 }
 
 protocol ImagePicker {
-    var completionHandler: ((Data?) -> Void)? { get set }
+    var completionHandler: ((Result<Data, Error>) -> Void)? { get set }
 }
 
 final class CameraPicker: NSObject, ImagePicker, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
-    var completionHandler: ((Data?) -> Void)?
+    var completionHandler: ((Result<Data, Error>) -> Void)?
 
     init(parentViewController: UIViewController) {
         super.init()
@@ -69,13 +73,17 @@ final class CameraPicker: NSObject, ImagePicker, UIImagePickerControllerDelegate
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         let image = info[.editedImage] as? UIImage
         picker.dismiss(animated: true) { [weak self] in
-            self?.completionHandler?(image?.jpegData(compressionQuality: 0.5))
+            if let data = image?.jpegData(compressionQuality: 0.5) {
+                self?.completionHandler?(.success(data))
+            } else {
+                self?.completionHandler?(.failure(ImagePickerError.unknownError))
+            }
         }
     }
 }
 
 final class PhotoLibraryPicker: ImagePicker, PHPickerViewControllerDelegate {
-    var completionHandler: ((Data?) -> Void)?
+    var completionHandler: ((Result<Data, Error>) -> Void)?
 
     init(parentViewController: UIViewController) {
         var configuration = PHPickerConfiguration()
@@ -90,9 +98,14 @@ final class PhotoLibraryPicker: ImagePicker, PHPickerViewControllerDelegate {
         picker.dismiss(animated: true) { [weak self] in
             for item in itemProviders {
                 if item.canLoadObject(ofClass: UIImage.self) {
-                    item.loadObject(ofClass: UIImage.self) { [weak self] image, _ in
-                        let image = image as? UIImage
-                        self?.completionHandler?(image?.jpegData(compressionQuality: 0.5))
+                    item.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+                        if let error = error {
+                            self?.completionHandler?(.failure(error))
+                        } else if let image = image as? UIImage, let data = image.jpegData(compressionQuality: 0.5) {
+                            self?.completionHandler?(.success(data))
+                        } else {
+                            self?.completionHandler?(.failure(ImagePickerError.unknownError))
+                        }
                     }
                 }
             }

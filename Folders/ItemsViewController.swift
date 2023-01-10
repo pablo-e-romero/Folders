@@ -159,21 +159,22 @@ final class ItemsViewController: UIViewController, MessagePresenter, LoadingView
             return
         }
 #endif
-        presentImagePicker(sourceType: sourceType) { [weak self] data in
-            guard let data = data else {
-                return
-            }
+        presentImagePicker(sourceType: sourceType) { [weak self] result in
+            switch result {
+            case let .success(data):
+                self?.presentInput(
+                    title: "Upload picture",
+                    message: nil,
+                    placeholder: "Enter picture name") { name in
+                        guard let name = name else {
+                            return
+                        }
 
-            self?.presentInput(
-                title: "Upload picture",
-                message: nil,
-                placeholder: "Enter picture name") { name in
-                    guard let name = name else {
-                        return
+                        self?.viewModel.uploadFile(name: name, data: data)
                     }
-
-                    self?.viewModel.uploadFile(name: name, data: data)
-                }
+            case let .failure(error):
+                self?.presentError(error)
+            }
         }
     }
 
